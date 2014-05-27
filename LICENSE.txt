@@ -1,4 +1,4 @@
-Copyright (c) 2014 Derek Kraan
+Copyright (c) 2014 Springest BV
 
 MIT License
 
