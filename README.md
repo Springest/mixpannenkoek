@@ -30,10 +30,16 @@ class ConversionFunnel < Mixpannenkoek::Base
 end
 ```
 
-### Query your data.
+### Query your data
 
 ```ruby
 ConversionFunnel.where(date: 31.days.ago..1.day.ago)
+```
+
+### Slice and dice your data
+
+```ruby
+ConversionFunnel.where(date: 31.days.ago..1.day.ago).where(user_id: 123).set(interval: 50).group('traffic_source')
 ```
 
 ### Operate on your data
@@ -43,20 +49,16 @@ ConversionFunnel.where(date: 31.days.ago..1.day.ago).map { |date,data| data['ste
 #=> [1, 4, 2]
 ```
 
-### Slice and dice your data
-
-```ruby
-ConversionFunnel.where(date: 31.days.ago..1.day.ago).where(user_id: 123).set(interval: 50).group('traffic_source')
-```
-
-### Default scopes
+### Use default scopes
 ```ruby
 class ConversionFunnel < Mixpannenkoek::Base
   default_scope { set(interval: 50) }
   default_scope { where(user_type: 'visitor') }
 end
 
-# are heritable
+# default scopes are heritable
+# (GroupedConversionFunnel will get the default scopes
+# of ConversionFunnel, in addition to its own)
 class GroupedConversionFunnel < ConversionFunnel
   default_scope { group('traffic_source') }
 end
