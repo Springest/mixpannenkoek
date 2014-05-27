@@ -1,3 +1,5 @@
+require 'mixpannenkoek/class_inheritable_attribute'
+
 module Mixpannenkoek
   class Base
     extend ::Mixpannenkoek::ClassInheritableAttribute
