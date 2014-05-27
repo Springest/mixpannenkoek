@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Mixpannenkoek::VERSION
   spec.authors       = ["Derek Kraan"]
   spec.email         = ["derek.kraan@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{Sugar for the mixpanel-client gem}
+  spec.description   = %q{Implements a fluent interface for writing queries for the mixpanel API. Also includes ActiveRecord-like features like default scoping.}
+  spec.homepage      = "https://github.com/Springest/mixpannenkoek"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
@@ -18,6 +18,9 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
+  spec.add_runtime_dependency 'mixpanel_client', "~> 4.1.0"
+
   spec.add_development_dependency "bundler", "~> 1.4"
   spec.add_development_dependency "rake"
+  spec.add_development_dependency "rspec"
 end
