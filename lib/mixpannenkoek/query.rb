@@ -2,13 +2,6 @@ require 'rubygems'
 require 'mixpanel_client'
 
 module Mixpannenkoek
-  class Benchmark
-    def self.ms(&block)
-      return block.call unless defined?(::Benchmark)
-      ::Benchmark.ms(&block)
-    end
-  end
-
   class Query
     class MissingRange < Exception; end
     class MissingConfiguration < Exception; end
@@ -114,11 +107,16 @@ module Mixpannenkoek
 
     def response_data
       check_parameters
-      time = Benchmark.ms do
+      log do
         @mixpanel_request ||= mixpanel_client.request(*request_parameters)
       end
-      Rails.logger.info "  Mixpanel (#{time.round(1)}ms) #{request_parameters.inspect}" if defined? Rails
       @mixpanel_request
+    end
+
+    def log(&block)
+      return block.call unless defined?(::Benchmark)
+      time = ::Benchmark.ms(&block)
+      Rails.logger.info "  Mixpanel (#{time.round(1)}ms) #{request_parameters.inspect}" if defined? Rails
     end
   end
 end
