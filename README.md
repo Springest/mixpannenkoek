@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-### Configure a model
+Begin by configuring a model.
 
 ```ruby
 class ConversionFunnel < Mixpannenkoek::Base
@@ -30,26 +30,22 @@ class ConversionFunnel < Mixpannenkoek::Base
 end
 ```
 
-### Query your data
+Build up a query with `where`, `group`, and `set`.
 
 ```ruby
 ConversionFunnel.where(date: 31.days.ago..1.day.ago)
-```
 
-### Slice and dice your data
-
-```ruby
 ConversionFunnel.where(date: 31.days.ago..1.day.ago).where(user_id: 123).set(interval: 50).group('traffic_source')
 ```
 
-### Operate on your data
+Operate on the query results fluently
 
 ```ruby
 ConversionFunnel.where(date: 31.days.ago..1.day.ago).map { |date,data| data['steps'].last['count'] }
 #=> [1, 4, 2]
 ```
 
-### Use default scopes
+Organize your query models with default scopes. Default scopes are heritable, so they will be automatically be applied to subclasses.
 ```ruby
 class ConversionFunnel < Mixpannenkoek::Base
   default_scope { set(interval: 50) }
