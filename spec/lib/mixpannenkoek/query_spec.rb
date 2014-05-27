@@ -96,24 +96,25 @@ describe Mixpannenkoek::Base do
     end
   end
 
-  describe '#to_hash' do
-    subject { Mixpannenkoek::TestQuery.where(date: date_range).to_hash }
+  describe '#results' do
+    subject { Mixpannenkoek::TestQuery.where(date: date_range).results }
 
     let(:response_data) { JSON.parse(File.open("#{File.dirname(__FILE__)}/../../fixtures/funnel_response_data.json").read) }
     before { Mixpanel::Client.any_instance.stub(:request).and_return(response_data) }
 
-    it 'returns the response data' do
-      expect(subject).to eq response_data
+    it 'returns a Mixpannenkoek::Results::Base object' do
+      expect(subject).to be_a Mixpannenkoek::Results::Base
     end
   end
 
   describe '#method_missing' do
-    before { Mixpannenkoek::Query.any_instance.stub(:mixpanel_request).and_return({ "funnel" => { "data" => { "2014-01-01" => [{ 'count' => '1' }, { 'count' => '4' }] } } }) }
-    it 'delegates all calls to #to_hash.send(*args)' do
-      expect(Mixpannenkoek::TestQuery.where(date: date_range).keys).to eq ['funnel']
+    before { Mixpanel::Client.any_instance.stub(:request).and_return({ "data" => { "2014-01-01" => [{ 'count' => '1' }, { 'count' => '4' }] } }) }
+    it 'delegates all calls to #results.send(*args)' do
+      expect(Mixpannenkoek::TestQuery.where(date: date_range).keys).to eq ['2014-01-01']
     end
+
     it 'delegates blocks' do
-      expect(Mixpannenkoek::TestQuery.where(date: date_range)['funnel']['data'].values[0].map { |hash| hash['count'] }).to eq ['1','4']
+      expect(Mixpannenkoek::TestQuery.where(date: date_range).values[0].map { |hash| hash['count'] }).to eq ['1','4']
     end
   end
 
