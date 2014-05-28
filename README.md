@@ -2,6 +2,8 @@
 
 This gem implements a fluent query interface for the [mixpanel_client](https://github.com/keolo/mixpanel_client) gem.
 
+[![Code Climate](https://codeclimate.com/github/Springest/mixpannenkoek.png)](https://codeclimate.com/github/Springest/mixpannenkoek)
+
 ## Installation
 
 Add this line to your application's Gemfile:
