@@ -58,7 +58,9 @@ Funnel::Conversions.where(date: Date.parse('2014-01-01')..Date.parse('2014-01-31
 ```
 
 `where` allows you to easily build the `where` parameter of the request.
+
 `group` corresponds to the `on` parameter.
+
 `set` sets any other parameters in the request (in this case, `funnel_id` is mandatory).
 
 This gem also supports `default_scope`, which is also heritable. Some of the parameters above might instead be set in the model, to save time.
