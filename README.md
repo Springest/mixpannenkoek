@@ -20,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-Begin by creating and configuring a model. In Rails you might place this in `app/models/conversion_funnel.rb`. You *must* set the api_key, api_secret, and endpoint. These properties are heritable, so in the following example, `OtherFunnel` will have the api_key, api_secret and endpoint already set.
+Begin by creating and configuring a model. In Rails you might place this in `app/models/funnel/conversions.rb`. You *must* set the api_key, api_secret, and endpoint. These properties are heritable, so in the following example, `Funnel::Conversions` will have the api_key, api_secret and endpoint set in `Funnel::Base`.
 
 ```ruby
 class Funnel::Base < Mixpannenkoek::Base
