@@ -43,6 +43,17 @@ describe Mixpannenkoek::Base do
       it 'sets :to_date' do
         expect(subject).to include({ to_date: '2014-01-05' })
       end
+
+      context 'date strings' do
+        let(:date_range) { '2014-01-01'..'2014-01-31' }
+        it 'sets :from_date' do
+          expect(subject).to include({ from_date: '2014-01-01' })
+        end
+
+        it 'sets :to_date' do
+          expect(subject).to include({ to_date: '2014-01-31' })
+        end
+      end
     end
   end
 

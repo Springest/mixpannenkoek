@@ -57,10 +57,7 @@ module Mixpannenkoek
       query = @vars
 
       if @where && @where != {}
-        if @where[:date]
-          query[:from_date] = @where[:date].first.strftime('%Y-%m-%d')
-          query[:to_date] = @where[:date].last.strftime('%Y-%m-%d')
-        end
+        extract_dates(query, @where)
 
         query[:where] = @where.map do |key,value|
           next if key == :date
@@ -117,6 +114,16 @@ module Mixpannenkoek
       return block.call unless defined?(::Benchmark)
       time = ::Benchmark.ms(&block)
       Rails.logger.info "  Mixpanel (#{time.round(1)}ms) #{request_parameters.inspect}" if defined? Rails
+    end
+
+    def extract_dates(query, where)
+      return unless where[:date]
+
+      query[:from_date] = where[:date].first
+      query[:to_date] = where[:date].last
+
+      query[:from_date] = query[:from_date].strftime('%Y-%m-%d') if query[:from_date].respond_to? :strftime
+      query[:to_date] = query[:to_date].strftime('%Y-%m-%d') if query[:to_date].respond_to? :strftime
     end
   end
 end
