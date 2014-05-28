@@ -5,33 +5,28 @@ module Mixpannenkoek
     extend ::Mixpannenkoek::ClassInheritableAttribute
     class_inheritable_attribute :_api_key, :_api_secret, :_endpoint, :_default_scope
 
-    # Public: the mixpanel api key
     def self.set_api_key(api_key = nil, &block)
-      raise ArgumentError if !api_key.nil? && !block.nil?
-      self._api_key = api_key || block
+      self._api_key = value_or_block(api_key, &block)
     end
 
-    def self.api_key
-      self._api_key.respond_to?(:call) ? self._api_key.call : self._api_key
-    end
-
-    # Public: the mixpanel api secret
     def self.set_api_secret(api_secret = nil, &block)
-      raise ArgumentError if !api_secret.nil? && !block.nil?
-      self._api_secret = api_secret || block
-    end
-
-    def self.api_secret
-      self._api_secret.respond_to?(:call) ? self._api_secret.call : self._api_secret
+      self._api_secret = value_or_block(api_secret, &block)
     end
 
     def self.set_endpoint(endpoint = nil, &block)
-      raise ArgumentError if !endpoint.nil? && !block.nil?
-      self._endpoint = endpoint || block
+      self._endpoint = value_or_block(endpoint, &block)
+    end
+
+    def self.api_key
+      value_from_block(self._api_key)
+    end
+
+    def self.api_secret
+      value_from_block(self._api_secret)
     end
 
     def self.endpoint
-      self._endpoint.respond_to?(:call) ? self._endpoint.call : self._endpoint
+      value_from_block(self._endpoint)
     end
 
     ### Class methods (for convenience)
@@ -62,6 +57,16 @@ module Mixpannenkoek
     def self.default_scopes
       self._default_scope ||= []
       self._default_scope.map{ |p| p.call }
+    end
+
+    private
+    def self.value_or_block(value, &block)
+      raise ArgumentError unless !!value ^ !!block
+      value || block
+    end
+
+    def self.value_from_block(value_or_proc)
+      value_or_proc.respond_to?(:call) ? value_or_proc.call : value_or_proc
     end
   end
 end
