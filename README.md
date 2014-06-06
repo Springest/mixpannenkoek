@@ -2,7 +2,7 @@
 
 This gem implements a fluent query interface for the Mixpanel. It uses the [mixpanel_client](https://github.com/keolo/mixpanel_client) gem.
 
-Read the [introductory blogpost](devblog.springest.com/introducing-mixpannenkoek).
+Read the [introductory blogpost](http://devblog.springest.com/introducing-mixpannenkoek).
 
 [![Code Climate](https://codeclimate.com/github/Springest/mixpannenkoek.png)](https://codeclimate.com/github/Springest/mixpannenkoek)
 
