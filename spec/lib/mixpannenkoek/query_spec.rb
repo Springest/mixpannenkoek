@@ -57,6 +57,27 @@ describe Mixpannenkoek::Base do
     end
   end
 
+  describe '#where_not' do
+    subject { Mixpannenkoek::TestQuery.where(date: date_range).where_not(subject_name: 'Subject ABC').request_parameters[1] }
+    it 'sets :where' do
+      expect(subject).to include({ where: 'properties["subject_name"] != "Subject ABC"' })
+    end
+
+    context 'called twice' do
+      subject { Mixpannenkoek::TestQuery.where(date: date_range).where_not(subject_name: 'Subject ABC').where_not(training_name: 'Training XYZ').request_parameters[1] }
+      it 'sets multiple :where conditions' do
+        expect(subject).to include({ where: 'properties["subject_name"] != "Subject ABC" and properties["training_name"] != "Training XYZ"' })
+      end
+    end
+
+    context 'called with value: []' do
+      subject { Mixpannenkoek::TestQuery.where(date: date_range).where_not(subject_name: ['Subject ABC', 'Subject XYZ']).request_parameters[1] }
+      it 'sets multiple :where conditions' do
+        expect(subject).to include({ where: '(properties["subject_name"] != "Subject ABC" and properties["subject_name"] != "Subject XYZ")' })
+      end
+    end
+  end
+
   describe '#group' do
     subject { Mixpannenkoek::TestQuery.where(date: date_range).group('subject_name').request_parameters[1] }
     it 'sets :on' do

@@ -8,8 +8,9 @@ module Mixpannenkoek
 
     attr_accessor :where, :group, :klass
 
-    def initialize(klass, where = {}, vars = {}, group = nil)
+    def initialize(klass, where = {}, where_not = {}, vars = {}, group = nil)
       @where = where
+      @where_not = where_not
       @vars  = vars
       @group = group
       @klass = klass
@@ -17,6 +18,10 @@ module Mixpannenkoek
 
     def where(condition)
       chain(where: @where.merge(condition))
+    end
+
+    def where_not(condition)
+      chain(where_not: @where_not.merge(condition))
     end
 
     def set(variable)
@@ -56,23 +61,42 @@ module Mixpannenkoek
     def query
       query = @vars
 
-      if @where && @where != {}
-        extract_dates(query, @where)
+      if (@where && @where != {}) || (@where_not && @where_not != {})
+        query[:where] = []
 
-        query[:where] = @where.map do |key,value|
-          next if key == :date
+        if @where && @where != {}
+          extract_dates(query, @where)
+          query[:where] += @where.map do |key,value|
+            next if key == :date
 
-          case value
-          when Array
-            %Q((#{value.map { |val| %Q(properties["#{key}"] == "#{val}") }.join(' or ')}))
-          else
-            %Q(properties["#{key}"] == "#{value}")
+            case value
+            when Array
+              %Q((#{value.map { |val| %Q(properties["#{key}"] == "#{val}") }.join(' or ')}))
+            else
+              %Q(properties["#{key}"] == "#{value}")
+            end
           end
-        end.compact
+        end
+
+        if @where_not && @where_not != {}
+          extract_dates(query, @where_not)
+          query[:where] += @where_not.map do |key,value|
+            next if key == :date
+
+            case value
+            when Array
+              %Q((#{value.map { |val| %Q(properties["#{key}"] != "#{val}") }.join(' and ')}))
+            else
+              %Q(properties["#{key}"] != "#{value}")
+            end
+          end
+        end
+
+        # query[:where] = query[:where].compact
 
         query[:where] =
           if query[:where]
-            query[:where].join(' and ')
+            query[:where].compact.join(' and ')
           else
             nil
           end
@@ -85,8 +109,8 @@ module Mixpannenkoek
 
     private
 
-    def chain(klass: @klass, where: @where, vars: @vars, group: @group)
-      self.class.new(klass, where, vars, group)
+    def chain(klass: @klass, where: @where, where_not: @where_not, vars: @vars, group: @group)
+      self.class.new(klass, where, where_not, vars, group)
     end
 
     def mixpanel_client
