@@ -73,7 +73,7 @@ describe Mixpannenkoek::Base do
 
   describe '#set' do
     subject { Mixpannenkoek::TestQuery.set(funnel_id: 12345).where(date: date_range).request_parameters[1] }
-    it { should include({ funnel_id: 12345 }) }
+    it { expect(subject).to include({ funnel_id: 12345 }) }
 
     context 'called twice' do
       subject { Mixpannenkoek::TestQuery.set(funnel_id: 12345).set(event: 'click').where(date: date_range).request_parameters[1] }
@@ -92,7 +92,7 @@ describe Mixpannenkoek::Base do
 
     context 'missing api_key' do
       subject { Mixpannenkoek::TestQuery.where(date: date_range).to_hash }
-      before { Mixpannenkoek::TestQuery.stub(:api_key) { nil } }
+      before { allow(Mixpannenkoek::TestQuery).to receive(:api_key) { nil } }
       it 'raises Mixpannenkoek::Query::MissingConfiguration' do
         expect { subject }.to raise_error Mixpannenkoek::Query::MissingConfiguration, 'The mixpanel api_key has not been configured'
       end
@@ -100,7 +100,7 @@ describe Mixpannenkoek::Base do
 
     context 'missing api_secret' do
       subject { Mixpannenkoek::TestQuery.where(date: date_range).to_hash }
-      before { Mixpannenkoek::TestQuery.stub(:api_secret) { nil } }
+      before { allow(Mixpannenkoek::TestQuery).to receive(:api_secret) { nil } }
       it 'raises Mixpannenkoek::Query::MissingConfiguration' do
         expect { subject }.to raise_error Mixpannenkoek::Query::MissingConfiguration, 'The mixpanel api_secret has not been configured'
       end
@@ -111,7 +111,7 @@ describe Mixpannenkoek::Base do
     subject { Mixpannenkoek::TestQuery.where(date: date_range).results }
 
     let(:response_data) { JSON.parse(File.open("#{File.dirname(__FILE__)}/../../fixtures/funnel_response_data.json").read) }
-    before { Mixpanel::Client.any_instance.stub(:request).and_return(response_data) }
+    before { allow_any_instance_of(Mixpanel::Client).to receive(:request).and_return(response_data) }
 
     it 'returns a Mixpannenkoek::Results::Base object' do
       expect(subject).to be_a Mixpannenkoek::Results::Base
@@ -119,7 +119,7 @@ describe Mixpannenkoek::Base do
   end
 
   describe '#method_missing' do
-    before { Mixpanel::Client.any_instance.stub(:request).and_return({ "data" => { "2014-01-01" => [{ 'count' => '1' }, { 'count' => '4' }] } }) }
+    before { allow_any_instance_of(Mixpanel::Client).to receive(:request).and_return({ "data" => { "2014-01-01" => [{ 'count' => '1' }, { 'count' => '4' }] } }) }
     it 'delegates all calls to #results.send(*args)' do
       expect(Mixpannenkoek::TestQuery.where(date: date_range).keys).to eq ['2014-01-01']
     end
