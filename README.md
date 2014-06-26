@@ -40,7 +40,7 @@ With mixpanel_client, you might run a query like this:
 
 ```ruby
 client = Mixpanel::Client.new(
-  api_key:    'MY_API_KEY', 
+  api_key:    'MY_API_KEY',
   api_secret: 'MY_API_SECRET'
 )
 
@@ -61,7 +61,7 @@ With mixpannenkoek, you would write it like this (making use of the models defin
 Funnel::Conversions.where(date: Date.parse('2014-01-01')..Date.parse('2014-01-31')).set(interval: 31).group('traffic_source').where(user_type: 'visitor').where(landing_page: 'homepage')
 ```
 
-`where` allows you to easily build the `where` parameter of the request.
+`where` and `where_not` allow you to easily build the `where` parameter of the request.
 
 `group` corresponds to the `on` parameter.
 
@@ -127,7 +127,7 @@ Funnel::Conversions.where(date: 31.days.ago..1.day.ago).response_data
       "goal"=>"View signup",
       "overall_conv_ratio"=>0.12362030905077263,
       "step_conv_ratio"=>0.12362030905077263}]}}
-      
+
 Funnel::Conversions.where(date: 31.days.ago..1.day.ago)['2010-05-24']['steps'][0]['count']
 #=> 762
 
