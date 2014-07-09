@@ -61,7 +61,7 @@ With mixpannenkoek, you would write it like this (making use of the models defin
 Funnel::Conversions.where(date: Date.parse('2014-01-01')..Date.parse('2014-01-31')).set(interval: 31).group('traffic_source').where(user_type: 'visitor').where(landing_page: 'homepage')
 ```
 
-`where` and `where_not` allow you to easily build the `where` parameter of the request.
+`where` and `where.not` allow you to easily build the `where` parameter of the request.
 
 `group` corresponds to the `on` parameter.
 
