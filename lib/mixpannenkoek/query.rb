@@ -16,11 +16,12 @@ module Mixpannenkoek
       @klass = klass
     end
 
-    def where(condition)
+    def where(condition = nil)
+      return self if condition.nil?
       chain(where: @where.merge(condition))
     end
 
-    def where_not(condition)
+    def not(condition)
       chain(where_not: @where_not.merge(condition))
     end
 
