@@ -65,42 +65,21 @@ module Mixpannenkoek
       if (@where && @where != {}) || (@where_not && @where_not != {})
         query[:where] = []
 
-        if @where && @where != {}
-          extract_dates(query, @where)
-          query[:where] += @where.map do |key,value|
-            next if key == :date
+        extract_dates(query, @where)
 
-            case value
-            when Array
-              %Q((#{value.map { |val| %Q(properties["#{key}"] == "#{val}") }.join(' or ')}))
-            else
-              %Q(properties["#{key}"] == "#{value}")
-            end
-          end
+        query[:where] += @where.map do |key,value|
+          where_clause(key, value)
         end
 
-        if @where_not && @where_not != {}
-          extract_dates(query, @where_not)
-          query[:where] += @where_not.map do |key,value|
-            next if key == :date
-
-            case value
-            when Array
-              %Q((#{value.map { |val| %Q(properties["#{key}"] != "#{val}") }.join(' and ')}))
-            else
-              %Q(properties["#{key}"] != "#{value}")
-            end
-          end
+        query[:where] += @where_not.map do |key,value|
+          where_not_clause(key, value)
         end
 
-        # query[:where] = query[:where].compact
-
-        query[:where] =
-          if query[:where]
-            query[:where].compact.join(' and ')
-          else
-            nil
-          end
+        if query[:where].compact != []
+          query[:where] = query[:where].compact.join(' and ')
+        else
+          query.delete(:where)
+        end
       end
 
       query[:on] = %Q(properties["#{@group}"]) if @group
@@ -149,6 +128,21 @@ module Mixpannenkoek
 
       query[:from_date] = query[:from_date].strftime('%Y-%m-%d') if query[:from_date].respond_to? :strftime
       query[:to_date] = query[:to_date].strftime('%Y-%m-%d') if query[:to_date].respond_to? :strftime
+    end
+
+    def where_clause(key, value, operator = '==', join = 'or')
+      return nil if key == :date
+
+      case value
+      when Array
+        %Q((#{value.map { |val| %Q(properties["#{key}"] #{operator} "#{val}") }.join(" #{join} ")}))
+      else
+        %Q(properties["#{key}"] #{operator} "#{value}")
+      end
+    end
+
+    def where_not_clause(key, value)
+      where_clause(key, value, '!=', 'and')
     end
   end
 end
