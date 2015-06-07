@@ -3,7 +3,6 @@ require 'mixpanel_client'
 
 module Mixpannenkoek
   class Query
-    class MissingRange < Exception; end
     class MissingConfiguration < Exception; end
 
     attr_accessor :where, :group, :klass
@@ -101,7 +100,6 @@ module Mixpannenkoek
     end
 
     def check_parameters
-      raise MissingRange if query_with_default_scopes[:from_date].nil? && query_with_default_scopes[:to_date].nil?
       raise MissingConfiguration.new('The mixpanel api_key has not been configured') if @klass.api_key.nil?
       raise MissingConfiguration.new('The mixpanel api_secret has not been configured') if @klass.api_secret.nil?
     end

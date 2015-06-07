@@ -104,13 +104,7 @@ describe Mixpannenkoek::Base do
   end
 
   describe '#query' do
-    context 'without date range' do
-      subject { Mixpannenkoek::TestQuery.group('subject_name').to_hash }
-      it 'raises Mixpannenkoek::Query::MissingRange' do
-        expect { subject }.to raise_error Mixpannenkoek::Query::MissingRange
-      end
-    end
-
+    
     context 'missing api_key' do
       subject { Mixpannenkoek::TestQuery.where(date: date_range).to_hash }
       before { allow(Mixpannenkoek::TestQuery).to receive(:api_key) { nil } }
