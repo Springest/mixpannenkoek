@@ -12,20 +12,20 @@ describe Mixpannenkoek::Base do
   describe '#where' do
     subject { Mixpannenkoek::TestQuery.where(date: date_range).where(subject_name: 'Subject ABC').request_parameters[1] }
     it 'sets :where' do
-      expect(subject).to include({ where: 'properties["subject_name"] == "Subject ABC"' })
+      expect(subject).to include({ where: 'string(properties["subject_name"]) == "Subject ABC"' })
     end
 
     context 'called twice' do
       subject { Mixpannenkoek::TestQuery.where(date: date_range).where(subject_name: 'Subject ABC').where(training_name: 'Training XYZ').request_parameters[1] }
       it 'sets multiple :where conditions' do
-        expect(subject).to include({ where: 'properties["subject_name"] == "Subject ABC" and properties["training_name"] == "Training XYZ"' })
+        expect(subject).to include({ where: 'string(properties["subject_name"]) == "Subject ABC" and string(properties["training_name"]) == "Training XYZ"' })
       end
     end
 
     context 'called with value: []' do
       subject { Mixpannenkoek::TestQuery.where(date: date_range).where(subject_name: ['Subject ABC', 'Subject XYZ']).request_parameters[1] }
       it 'sets multiple :where conditions' do
-        expect(subject).to include({ where: '(properties["subject_name"] == "Subject ABC" or properties["subject_name"] == "Subject XYZ")' })
+        expect(subject).to include({ where: '(string(properties["subject_name"]) == "Subject ABC" or string(properties["subject_name"]) == "Subject XYZ")' })
       end
     end
 
@@ -60,20 +60,20 @@ describe Mixpannenkoek::Base do
   describe '#where.not' do
     subject { Mixpannenkoek::TestQuery.where(date: date_range).where.not(subject_name: 'Subject ABC').request_parameters[1] }
     it 'sets :where' do
-      expect(subject).to include({ where: 'properties["subject_name"] != "Subject ABC"' })
+      expect(subject).to include({ where: 'string(properties["subject_name"]) != "Subject ABC"' })
     end
 
     context 'called twice' do
       subject { Mixpannenkoek::TestQuery.where(date: date_range).where.not(subject_name: 'Subject ABC').where.not(training_name: 'Training XYZ').request_parameters[1] }
       it 'sets multiple :where conditions' do
-        expect(subject).to include({ where: 'properties["subject_name"] != "Subject ABC" and properties["training_name"] != "Training XYZ"' })
+        expect(subject).to include({ where: 'string(properties["subject_name"]) != "Subject ABC" and string(properties["training_name"]) != "Training XYZ"' })
       end
     end
 
     context 'called with value: []' do
       subject { Mixpannenkoek::TestQuery.where(date: date_range).where.not(subject_name: ['Subject ABC', 'Subject XYZ']).request_parameters[1] }
       it 'sets multiple :where conditions' do
-        expect(subject).to include({ where: '(properties["subject_name"] != "Subject ABC" and properties["subject_name"] != "Subject XYZ")' })
+        expect(subject).to include({ where: '(string(properties["subject_name"]) != "Subject ABC" and string(properties["subject_name"]) != "Subject XYZ")' })
       end
     end
   end
@@ -151,7 +151,7 @@ describe Mixpannenkoek::Base do
 
     subject { Mixpannenkoek::DefaultScopeQuery.where(date: date_range).request_parameters[1] }
     it 'applies the default scope' do
-      expect(subject).to include({ where: 'properties["subject_name"] == "Subject XYZ"' })
+      expect(subject).to include({ where: 'string(properties["subject_name"]) == "Subject XYZ"' })
     end
   end
 end

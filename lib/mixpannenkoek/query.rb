@@ -133,9 +133,9 @@ module Mixpannenkoek
 
       case value
       when Array
-        %Q((#{value.map { |val| %Q(properties["#{key}"] #{operator} "#{val}") }.join(" #{join} ")}))
+        %Q((#{value.map { |val| %Q(string(properties["#{key}"]) #{operator} "#{val}") }.join(" #{join} ")}))
       else
-        %Q(properties["#{key}"] #{operator} "#{value}")
+        %Q(string(properties["#{key}"]) #{operator} "#{value}")
       end
     end
 
